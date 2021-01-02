@@ -1,4 +1,7 @@
 # HVV Card
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
+
 HVV departures card for Home Assistant.
 
 This custom UI card shows the next departures at a certain station based on the [HVV Departures integration](https://www.home-assistant.io/integrations/hvv_departures).
