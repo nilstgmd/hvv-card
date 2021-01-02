@@ -10,9 +10,22 @@ This custom UI card shows the next departures at a certain station based on the 
 
 ## Installation
 
-0. Install the [HVV Departures integration](https://www.home-assistant.io/integrations/hvv_departures) and setup a departure sensor, e.g. `sensor.departures_at_jungfernstieg`.
+### Prerequisite
+
+Install the [HVV Departures integration](https://www.home-assistant.io/integrations/hvv_departures) and setup a departure sensor, e.g. `sensor.departures_at_jungfernstieg`.
+
+### HACS
+
+HVV Card is available as a custom HACS repository. This is the recommended way to install the custom cards.
+
+1. Open HACS and add this repository to your "Custom repositories".
+1. "HVV Departure Card" will sho up in the "Frontend" section
+1. Click "Install" and continue configure a card
+
+### Manual
+
 1. Download the [hvv-card.js](https://raw.githubusercontent.com/nilstgmd/hvv-card/main/hvv-card.js) to `/config/www/`.
-2. Add the following to resources in your lovelace config or use the [Lovelace configuration UI](https://developers.home-assistant.io/docs/frontend/custom-ui/registering-resources/).:
+1. Add the following to resources in your lovelace config or use the [Lovelace configuration UI](https://developers.home-assistant.io/docs/frontend/custom-ui/registering-resources/).:
 
 ```yaml
 resources:
