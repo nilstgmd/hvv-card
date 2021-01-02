@@ -1,7 +1,7 @@
 # HVV Card
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
-[![release badge](https://img.shields.io/github/v/release/nilstgmd/hvv-card.svg)](https://github.com/nilstgmd/hvv-card/releases)
+[![release badge](https://img.shields.io/github/v/release/nilstgmd/hvv-card.svg?style=for-the-badge)](https://github.com/nilstgmd/hvv-card/releases)
 
 HVV departures card for Home Assistant.
 
