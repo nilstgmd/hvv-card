@@ -41,7 +41,7 @@ Add a card with type `custom:hvv-card`:
 ```yaml
 type: 'custom:hvv-card'
 entity: sensor.departures_at_jungfernstieg
-max: (Optional) 10
+max: 10
 ```
 
 #### Options
