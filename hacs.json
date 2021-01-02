@@ -1,6 +1,7 @@
 {
     "name": "HVV Departure Card",
     "content_in_root": false,
+    "filename": "hvv-card.js",
     "country": ["DE"],
     "render_readme": true
 }
