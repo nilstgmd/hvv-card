@@ -7,7 +7,9 @@ HVV departures card for Home Assistant.
 
 This custom UI card shows the next departures at a certain station based on the [HVV Departures integration](https://www.home-assistant.io/integrations/hvv_departures).
 
-![HVV Card](https://github.com/nilstgmd/hvv-card/blob/main/hvv-card.png)
+![HVV Card dark](https://github.com/nilstgmd/hvv-card/blob/main/hvv-card.png)
+![HVV Card light](https://github.com/nilstgmd/hvv-card/blob/main/hvv-card-light.png)
+
 
 ## Installation
 
