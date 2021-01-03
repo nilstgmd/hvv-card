@@ -89,7 +89,7 @@ class HvvCard extends LitElement {
 
                     count++;
 
-                    return count < max
+                    return count <= max
                     ? html`
                         <tr>
                             <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
