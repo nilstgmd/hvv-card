@@ -22,8 +22,8 @@ Install the [HVV Departures integration](https://www.home-assistant.io/integrati
 HVV Card is available as a custom HACS repository. This is the recommended way to install the custom cards.
 
 1. Open HACS and add this repository to your "Custom repositories".
-1. "HVV Departure Card" will sho up in the "Frontend" section
-1. Click "Install" and continue configure a card
+1. "HVV Departure Card" will show up in the "Frontend" section
+1. Click "Install" and continue to configure a card
 
 ### Manual
 
