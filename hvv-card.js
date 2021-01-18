@@ -130,7 +130,7 @@ class HvvCard extends LitElement {
         }
 
         td.expand {
-            width: 99%
+            width: 95%
         }
 
         span.line {
@@ -146,7 +146,8 @@ class HvvCard extends LitElement {
              color: #e2001a;
         }
 
-        span.S {
+        span.S, span.A{
+            background-color: #009252;
             border-radius: 999px;
         }
 
@@ -154,8 +155,29 @@ class HvvCard extends LitElement {
             border-radius: 0px;
         }
 
-        span.Bus, span.XpressBus {
+        span.Bus, span.XpressBus, span.Schnellbus, span.NachtBus {
             background-color: #e2001a;
+            clip-path: polygon(20% 0, 80% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
+            width: 48px;
+            margin-left: 0;
+        }
+
+        span.XpressBus {
+            background-color: #1a962b;
+        }
+
+        span.NachtBus {
+            background-color: #000000;
+        }
+
+        span.Schiff {
+            background-color: #009dd1;
+            clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
+        }
+
+        span.ICE, span.RE, span.EC, span.IC, span.RB, span.R {
+            background-color: transparent;
+            color: #000;
         }
 
         span.U1 {
