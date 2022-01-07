@@ -50,6 +50,7 @@ max: 10
 
 | Name | Type | Default | Since | Description |
 |------|------|---------|-------|-------------|
-| type | string | **required** | v0.1.0 | `custom:hvv-card`
-| entity | string | **required** | v0.1.0 | The entity_id from the HVV departures integration.
-| max | int | optional (Default: 5) | v0.1.0 | Set the max. listed departures
+| type | string | **required** | v0.1.0 | `custom:hvv-card` |
+| entity | string | **required** | v0.1.0 | The entity_id from the HVV departures integration. |
+| max | int | optional (Default: 5) | v0.1.0 | Set the max. listed departures |
+| show_time | boolean | optional (Default: false) | v0.1.1 | Shows the departure time instead of the minutes |
