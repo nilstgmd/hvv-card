@@ -86,7 +86,7 @@ class HvvCard extends LitElement {
                     const departure = new Date(attr["departure"]);
                     const diffMs = departure - today;
                     const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
-                    const departureInMins = Math.round((diffMs / (1000*60)) % 60);
+                    const departureMins = Math.round((diffMs / (1000*60)) % 60);
 
                     count++;
 
@@ -97,8 +97,8 @@ class HvvCard extends LitElement {
                             <td class="expand">${direction}</td>
                             <td class="narrow" style="text-align:right;">
                                 ${departureHours > 0 ? 
-                                    departureHours + `:` + departureInMins:
-                                    departureInMins}
+                                    departureHours + `:` + departureMins:
+                                    departureMins}
                                 ${delay > 0 ?
                                     html`<span class="delay">+${delay}</span>` :
                                     ``}
