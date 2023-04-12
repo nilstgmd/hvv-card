@@ -82,7 +82,8 @@ class HvvCard extends LitElement {
                     const direction = attr['direction'];
                     const line = attr['line'];
                     const type = attr['type'];
-                    const delay = attr['delay'];
+                    const delay_seconds = attr['delay'];
+                    const delay_minutes = (delay_seconds / 60);
                     const departure = new Date(attr["departure"]);
                     const diffMs = departure - today;
                     const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
@@ -99,8 +100,8 @@ class HvvCard extends LitElement {
                                 ${departureHours > 0 ? 
                                     departureHours + `:` + departureMins:
                                     departureMins}
-                                ${delay > 0 ?
-                                    html`<span class="delay">+${delay}</span>` :
+                                ${delay_minutes > 0 ?
+                                    html`<span class="delay_minutes">+${delay_minutes}</span>` :
                                     ``}
                                 ${departureHours > 0 ? 
                                     `h:min`:
@@ -148,7 +149,7 @@ class HvvCard extends LitElement {
             margin-right: 0.7em;
         }
 
-        span.delay {
+        span.delay_minutes {
              color: #e2001a;
         }
 
