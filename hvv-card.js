@@ -82,10 +82,12 @@ class HvvCard extends LitElement {
                     const direction = attr['direction'];
                     const line = attr['line'];
                     const type = attr['type'];
-                    const delay = attr['delay'];
+                    const delay_seconds = attr['delay'];
+                    const delay_minutes = (delay_seconds / 60);
                     const departure = new Date(attr["departure"]);
-                    const diffMs = (departure - today);
-                    const departureInMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
+                    const diffMs = departure - today;
+                    const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
+                    const departureMins = Math.round((diffMs / (1000*60)) % 60);
 
                     count++;
 
@@ -95,13 +97,15 @@ class HvvCard extends LitElement {
                             <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
                             <td class="expand">${direction}</td>
                             <td class="narrow" style="text-align:right;">
-                                ${this._config.show_time ? 
-                                    departure.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) :
-                                    html `${departureInMins} min`
-                                }
-                                ${delay > 0 ?
-                                    html`<span class="delay">+${delay}</span> min` :
-                                    html``}
+                                ${departureHours > 0 ? 
+                                    departureHours + `:` + departureMins:
+                                    departureMins}
+                                ${delay_minutes > 0 ?
+                                    html`<span class="delay_minutes">+${delay_minutes}</span>` :
+                                    ``}
+                                ${departureHours > 0 ? 
+                                    `h:min`:
+                                    `min`}
                             </td>
                         </tr>
                         `
@@ -145,7 +149,7 @@ class HvvCard extends LitElement {
             margin-right: 0.7em;
         }
 
-        span.delay {
+        span.delay_minutes {
              color: #e2001a;
         }
 
