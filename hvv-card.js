@@ -97,15 +97,21 @@ class HvvCard extends LitElement {
                             <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
                             <td class="expand">${direction}</td>
                             <td class="narrow" style="text-align:right;">
-                                ${departureHours > 0 ? 
-                                    departureHours + `:` + departureMins:
-                                    departureMins}
+                                ${this._config.show_time ? 
+                                    departure.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) :
+                                    departureHours > 0 ? 
+                                        departureHours + `:` + departureMins :
+                                        departureMins
+                                }
                                 ${delay_minutes > 0 ?
                                     html`<span class="delay_minutes">+${delay_minutes}</span>` :
                                     ``}
-                                ${departureHours > 0 ? 
-                                    `h:min`:
-                                    `min`}
+                                ${delay_minutes <= 0 && this._config.show_time ?
+                                    `` :
+                                    departureHours > 0 ? 
+                                        `h:min` :
+                                        `min`
+                                }
                             </td>
                         </tr>
                         `
