@@ -42,8 +42,9 @@ Add a card with type `custom:hvv-card`:
 
 ```yaml
 type: 'custom:hvv-card'
-entity: sensor.departures_at_jungfernstieg
-max: 10
+entities:
+  - sensor.departures_at_jungfernstieg
+  - sensor.departures_at_schlump
 ```
 
 #### Options
@@ -51,6 +52,25 @@ max: 10
 | Name | Type | Default | Since | Description |
 |------|------|---------|-------|-------------|
 | type | string | **required** | v0.1.0 | `custom:hvv-card` |
-| entity | string | **required** | v0.1.0 | The entity_id from the HVV departures integration. |
+| entities | array | **required** | v0.2.0 | Array of entity_ids from the HVV departures integration, that will be shown on the card. |
+| title | string | optional (Default: HVV Departures) | v0.2.0 | Title shown on the card. |
+| show_title | boolean | optional (Default: true) | v0.2.0 | Shows the title of the card |
 | max | int | optional (Default: 5) | v0.1.0 | Set the max. listed departures |
 | show_time | boolean | optional (Default: false) | v0.1.7 | Shows the departure time instead of the minutes |
+| show_name | boolean | optional (Default: true) | v0.2.0 | Shows the name of the departure sensor |
+
+#### Example
+
+Here is a more exhaustive example of a configuration:
+
+```yaml
+type: custom:hvv-card-test
+entities:
+  - sensor.departures_at_jungfernstieg
+  - sensor.departures_at_schlump
+max: 10
+show_time: false
+show_title: true
+show_name: false
+title: HVV
+```

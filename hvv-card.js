@@ -6,19 +6,19 @@ const css = LitElement.prototype.css;
 
 function hasConfigOrEntityChanged(element, changedProps) {
     if (changedProps.has("_config")) {
-      return true;
+        return true;
     }
 
     const oldHass = changedProps.get("hass");
     if (oldHass) {
-      return (
-        oldHass.states[element._config.entity] !==
-          element.hass.states[element._config.entity]
-      );
+        return (
+            oldHass.states[element._config.entity] !==
+            element.hass.states[element._config.entity]
+        );
     }
 
     return true;
-  }
+}
 
 class HvvCard extends LitElement {
     static get properties() {
@@ -29,8 +29,12 @@ class HvvCard extends LitElement {
     }
 
     setConfig(config) {
-        if (!config.entity) {
-            throw new Error("Please define a departure entity");
+        if (config.entity) {
+            throw new Error("The entity property is deprecated, please use entities instead.")
+        }
+
+        if (!config.entities) {
+            throw new Error("The entities property is required.")
         }
         this._config = config;
     }
@@ -44,83 +48,96 @@ class HvvCard extends LitElement {
             return html ``;
         }
 
-        const stateObj = this.hass.states[this._config.entity];
-
-        if (!stateObj) {
-            return html `
-          <style>
-            .not-found {
-              flex: 1;
-              background-color: yellow;
-              padding: 8px;
-            }
-          </style>
-          <ha-card>
-            <div class="not-found">
-              Entity not available: ${this._config.entity}
-            </div>
-          </ha-card>
-        `;
-        }
-
-        const today = new Date();
-        const max = this._config.max ? this._config.max : 5;
-        var count = 0;
+        var title = this._config.title ? this._config.title : "HVV Departures";
+        var showTitle = this._config.show_title !== false;
+        var showName = this._config.show_name !== false;
 
         return html `
-        <ha-card>
-          ${
-            stateObj.attributes['friendly_name']
-              ? html`
-                <h1 class="card-header">${stateObj.attributes['friendly_name']}</h1>
-                `
-              : ""
-          }
-          <div>
-            <table>
-                ${stateObj.attributes['next'].map(attr => {
-                    const direction = attr['direction'];
-                    const line = attr['line'];
-                    const type = attr['type'];
-                    const delay_seconds = attr['delay'];
-                    const delay_minutes = (delay_seconds / 60);
-                    const departure = new Date(attr["departure"]);
-                    const diffMs = departure - today;
-                    const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
-                    const departureMins = Math.round((diffMs / (1000*60)) % 60);
-
-                    count++;
-
-                    return count <= max
-                    ? html`
-                        <tr>
-                            <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
-                            <td class="expand">${direction}</td>
-                            <td class="narrow" style="text-align:right;">
-                                ${this._config.show_time ? 
-                                    departure.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) :
-                                    departureHours > 0 ? 
-                                        departureHours + `:` + departureMins :
-                                        departureMins
-                                }
-                                ${delay_minutes > 0 ?
-                                    html`<span class="delay_minutes">+${delay_minutes}</span>` :
-                                    ``}
-                                ${delay_minutes <= 0 && this._config.show_time ?
-                                    `` :
-                                    departureHours > 0 ? 
-                                        `h:min` :
-                                        `min`
-                                }
-                            </td>
-                        </tr>
+             <ha-card>
+                ${showTitle ?
+                         html`
+                            <h1 class="card-header">${title}</h1>
                         `
-                    : html ``;
-                })}
-            </table>
-          </div>
+                        : ""
+                    }
+
+                ${this._config.entities.map((ent) => {
+                    const stateObj = this.hass.states[ent];
+                    if (!stateObj) {
+                        return html `
+                            <style>
+                                .not-found {
+                                flex: 1;
+                                background-color: yellow;
+                                padding: 8px;
+                                }
+                            </style>
+                            <ha-card>
+                                <div class="not-found">
+                                Entity not available: ${ent}
+                                </div>
+                            </ha-card>
+                            `;
+                    }
+
+                    const today = new Date();
+                    const max = this._config.max ? this._config.max : 5;
+                    var count = 0;
+
+                    return html `
+                    <div>
+                        ${showName && stateObj.attributes['friendly_name']
+                        ? html`
+                            <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']}</h2>
+                            `
+                        : ""
+                        }
+                        <table>
+                            ${stateObj.attributes['next'].map(attr => {
+                                const direction = attr['direction'];
+                                const line = attr['line'];
+                                const type = attr['type'];
+                                const delay_seconds = attr['delay'];
+                                const delay_minutes = (delay_seconds / 60);
+                                const departure = new Date(attr["departure"]);
+                                const diffMs = departure - today;
+                                const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
+                                const departureMins = Math.round((diffMs / (1000*60)) % 60);
+
+                                count++;
+
+                                return count <= max
+                                ? html`
+                                    <tr>
+                                        <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
+                                        <td class="expand">${direction}</td>
+                                        <td class="narrow" style="text-align:right;">
+                                            ${this._config.show_time ?
+                                                departure.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) :
+                                                departureHours > 0 ?
+                                                    departureHours + `:` + departureMins :
+                                                    departureMins
+                                            }
+                                            ${delay_minutes > 0 ?
+                                                html`<span class="delay_minutes">+${delay_minutes}</span>` :
+                                                ``}
+                                            ${delay_minutes <= 0 && this._config.show_time ?
+                                                `` :
+                                                departureHours > 0 ?
+                                                    `h:min` :
+                                                    `min`
+                                            }
+                                        </td>
+                                    </tr>
+                                    `
+                                : html ``;
+                            })}
+                        </table>
+                    </div>
+            `;
+        })}
         </ha-card>
-      `;
+        `;
     }
 
     getCardSize() {
@@ -128,7 +145,7 @@ class HvvCard extends LitElement {
     }
 
     static get styles() {
-        return css`
+        return css `
         table {
             width: 100%;
             padding: 6px 14px;
