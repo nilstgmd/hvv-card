@@ -10,14 +10,17 @@ function hasConfigOrEntityChanged(element, changedProps) {
     }
 
     const oldHass = changedProps.get("hass");
-    if (oldHass) {
-        return (
-            oldHass.states[element._config.entity] !==
-            element.hass.states[element._config.entity]
-        );
+    if (!oldHass) {
+        return true;
     }
 
-    return true;
+    for (const entity of element._config.entities) {
+        if (oldHass.states[entity] !== element.hass.states[entity]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 class HvvCard extends LitElement {
