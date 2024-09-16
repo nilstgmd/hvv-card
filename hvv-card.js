@@ -83,6 +83,18 @@ class HvvCard extends LitElement {
                             `;
                     }
 
+                    if (stateObj.state == 'unavailable') {
+                        return html `
+                            <div>
+                            ${showName && stateObj.attributes['friendly_name']
+                            ? html`
+                                <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
+                                `
+                            : ""
+                            }
+                        `;
+                    }
+
                     const today = new Date();
                     const max = this._config.max ? this._config.max : 5;
                     var count = 0;
