@@ -253,6 +253,14 @@ class HvvCard extends LitElement {
             background-color: #622181;
         }
 
+        span.S4 {
+            background-color: #BF0880;
+        }
+
+        span.S5 {
+            background-color: #008ABE;
+        }
+
         span.S11 {
             background-color: #31962b;
         }
