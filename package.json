@@ -5,6 +5,9 @@
   "scripts": {
     "test": "jest"
   },
+  "jest": {
+    "testEnvironment": "jsdom"
+  },
   "devDependencies": {
     "jest": "^29.7.0",
     "jsdom": "^23.0.0"
