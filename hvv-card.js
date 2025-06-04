@@ -92,6 +92,7 @@ class HvvCard extends LitElement {
                                 `
                             : ""
                             }
+                            </div>
                         `;
                     }
 
