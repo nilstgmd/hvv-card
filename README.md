@@ -28,7 +28,7 @@ HVV Card is available as a custom HACS repository. This is the recommended way t
 ### Manual
 
 1. Download the [hvv-card.js](https://raw.githubusercontent.com/nilstgmd/hvv-card/main/hvv-card.js) to `/config/www/`.
-1. Add the following to resources in your lovelace config or use the [Lovelace configuration UI](https://developers.home-assistant.io/docs/frontend/custom-ui/registering-resources/).:
+1. Add the following to resources in your Lovelace config or use the [Lovelace configuration UI](https://developers.home-assistant.io/docs/frontend/custom-ui/registering-resources/).:
 
 ```yaml
 resources:
