@@ -23,13 +23,13 @@ describe('hvv-card custom element', () => {
     customElements.define('ha-panel-lovelace', HaPanelLovelace);
   });
 
-  test('defines hvv-card element', async () => {
-    await import('../hvv-card.js');
+  test('defines hvv-card element', () => {
+    require('../hvv-card.js');
     expect(customElements.get('hvv-card')).toBeDefined();
   });
 
-  test('render shows unavailable warning icon', async () => {
-    await import('../hvv-card.js');
+  test('render shows unavailable warning icon', () => {
+    require('../hvv-card.js');
     const card = document.createElement('hvv-card');
     card.setConfig({ entities: ['sensor.unavail'] });
     card.hass = {

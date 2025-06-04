@@ -77,8 +77,11 @@ title: HVV
 
 ## Development
 
-Run the tests with:
+Install dependencies and run the tests with:
 
 ```bash
+npm install
+=======
+Run the tests with:
 npm test
 ```
