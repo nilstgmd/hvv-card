@@ -74,3 +74,11 @@ show_title: true
 show_name: false
 title: HVV
 ```
+
+## Development
+
+Run the tests with:
+
+```bash
+npm test
+```
