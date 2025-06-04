@@ -64,7 +64,7 @@ entities:
 Here is a more exhaustive example of a configuration:
 
 ```yaml
-type: custom:hvv-card-test
+type: custom:hvv-card
 entities:
   - sensor.departures_at_jungfernstieg
   - sensor.departures_at_schlump
