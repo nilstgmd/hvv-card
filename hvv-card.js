@@ -84,14 +84,14 @@ class HvvCard extends LitElement {
                     }
 
                     if (stateObj.state == 'unavailable') {
-                        return html `
+                        return html`
                             <div>
-                            ${showName && stateObj.attributes['friendly_name']
-                            ? html`
-                                <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
-                                `
-                            : ""
-                            }
+                                ${showName && stateObj.attributes['friendly_name']
+                                    ? html`
+                                        <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
+                                    `
+                                    : ""}
+                            </div>
                         `;
                     }
 
@@ -175,7 +175,7 @@ class HvvCard extends LitElement {
         }
 
         td.expand {
-            width: 95%
+            width: 95%;
         }
 
         span.line {
@@ -251,6 +251,14 @@ class HvvCard extends LitElement {
 
         span.S3 {
             background-color: #622181;
+        }
+
+        span.S4 {
+            background-color: #BF0880;
+        }
+
+        span.S5 {
+            background-color: #008ABE;
         }
 
         span.S11 {
