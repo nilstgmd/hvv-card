@@ -74,3 +74,12 @@ show_title: true
 show_name: false
 title: HVV
 ```
+
+## Development
+
+Install dependencies and run the tests with:
+
+```bash
+npm install
+npm test
+```

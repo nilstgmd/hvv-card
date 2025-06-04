@@ -1,0 +1,12 @@
+{
+  "name": "hvv-card",
+  "version": "0.0.1",
+  "description": "Test setup for hvv-card",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jsdom": "^23.0.0"
+  }
+}
