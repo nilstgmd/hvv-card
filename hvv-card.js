@@ -242,15 +242,15 @@ class HvvCard extends LitElement {
         }
 
         span.S1 {
-            background-color: #31962b;
+            background-color: #0bb14c;
         }
 
         span.S2 {
-            background-color: #b51143;
+            background-color: #b62851;
         }
 
         span.S3 {
-            background-color: #622181;
+            background-color: #642d91;
         }
 
         span.S4 {
@@ -258,19 +258,11 @@ class HvvCard extends LitElement {
         }
 
         span.S5 {
-            background-color: #008ABE;
+            background-color: #0094c2;
         }
 
-        span.S11 {
-            background-color: #31962b;
-        }
-
-        span.S21 {
-            background-color: #b51143;
-        }
-
-        span.S31 {
-            background-color: #622181;
+        span.S7 {
+            background-color: #cc771f;
         }
       `;
     }
