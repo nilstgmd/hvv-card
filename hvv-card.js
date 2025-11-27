@@ -220,8 +220,13 @@ class HvvCard extends LitElement {
             clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
         }
 
-        span.ICE, span.RE, span.EC, span.IC, span.RB, span.R {
-            background-color: transparent;
+        span.ICE, span.EC, span.IC {
+            background-color: #f00c0c;
+            color: #b4b4b4;
+        }
+
+        span.RE, span.RB, span.R {
+            background-color: #ffffff;
             color: #000;
         }
 
