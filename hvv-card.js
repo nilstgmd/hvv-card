@@ -228,6 +228,7 @@ class HvvCard extends LitElement {
             background-color: #ffffff;
             color: #666666;
             border-radius: 4px;
+            font-style: italic;
         }
 
         span.RE, span.RB, span.R {
