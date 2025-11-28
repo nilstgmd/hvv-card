@@ -198,8 +198,8 @@ class HvvCard extends LitElement {
         span.S, span.A{
             background-color: #009252;
             border-radius: 999px;
-            min-width: 32px;
-            max-width: 36px;
+            min-width: 28px;
+            max-width: 32px;
         }
 
         span.U {
@@ -209,10 +209,8 @@ class HvvCard extends LitElement {
         span.Bus, span.XpressBus, span.Schnellbus, span.NachtBus {
             background-color: #e2001a;
             clip-path: polygon(20% 0, 80% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
-            min-width: 32px;
-            max-width: 36px;
-            flex-shrink: 0;
-            margin-left: 0;
+            min-width: 28px;
+            max-width: 32px;
         }
 
         span.XpressBus {
