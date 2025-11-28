@@ -198,6 +198,7 @@ class HvvCard extends LitElement {
         span.S, span.A{
             background-color: #009252;
             border-radius: 999px;
+            min-width: 32px;
         }
 
         span.U {
@@ -208,6 +209,9 @@ class HvvCard extends LitElement {
             background-color: #e2001a;
             clip-path: polygon(20% 0, 80% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
             width: 48px;
+            min-width: 48px;
+            max-width: 48px;
+            flex-shrink: 0;
             margin-left: 0;
         }
 
