@@ -221,13 +221,15 @@ class HvvCard extends LitElement {
         }
 
         span.ICE, span.EC, span.IC {
-            background-color: #f00c0c;
+            background-color: #ffffff;
             color: #b4b4b4;
+            border-radius: 4px;
         }
 
         span.RE, span.RB, span.R {
             background-color: #ffffff;
             color: #000;
+            border-radius: 4px;
         }
 
         span.U1 {
