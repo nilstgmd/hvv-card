@@ -247,8 +247,8 @@ class HvvCard extends LitElement {
 
         span.U3 {
             background-color: #fddd00;
-            -webkit-text-stroke: 0.4px #000;
-            font-size: 1.1em;
+            -webkit-text-stroke: 0.8px #000;
+            font-size: 1.2em;
         }
 
         span.U4 {
