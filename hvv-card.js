@@ -181,10 +181,14 @@ class HvvCard extends LitElement {
         span.line {
             font-weight: bold;
             font-size: 0.9em;
-            padding: 3px 8px 2px 8px;
+            padding: 3px 8px;
             color: #ffffff;
             background-color: #888888;
             margin-right: 0.7em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
 
         span.delay_minutes {
