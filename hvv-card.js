@@ -249,6 +249,11 @@ class HvvCard extends LitElement {
             background-color: #fddd00;
             -webkit-text-stroke: 0.5px #000;
             font-size: 1.2em;
+            line-height: 1.0;
+            padding: 2px 8px;
+            height: 26.14px;
+            max-height: 26.14px;
+            box-sizing: border-box;
         }
 
         span.U4 {
