@@ -232,7 +232,7 @@ class HvvCard extends LitElement {
         }
 
         span.RE, span.RB, span.R {
-            background-color: #ffffff;
+            background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
             color: #000;
             border-radius: 4px;
         }
