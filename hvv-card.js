@@ -225,7 +225,7 @@ class HvvCard extends LitElement {
         }
 
         span.ICE, span.EC, span.IC {
-            background-color: #ffffff;
+            background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
             color: #666666;
             border-radius: 4px;
             font-style: italic;
@@ -246,7 +246,7 @@ class HvvCard extends LitElement {
         }
 
         span.U3 {
-            background: linear-gradient(135deg, #fddd00 0%, #d4c000 50%, #fddd00 100%);
+            background: radial-gradient(circle, #d4c000 0%, #fddd00 100%);
         }
 
         span.U4 {
