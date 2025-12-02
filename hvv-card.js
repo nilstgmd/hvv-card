@@ -246,8 +246,7 @@ class HvvCard extends LitElement {
         }
 
         span.U3 {
-            background-color: #fddd00;
-            -webkit-text-stroke: 0.5px #000;
+            background: linear-gradient(135deg, #fddd00 0%, #d4c000 50%, #fddd00 100%);
         }
 
         span.U4 {
