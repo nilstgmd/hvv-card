@@ -15,7 +15,8 @@ function hasConfigOrEntityChanged(element, changedProps) {
     }
 
     for (const entity of element._config.entities) {
-        if (oldHass.states[entity] !== element.hass.states[entity]) {
+        const entityId = typeof entity === 'string' ? entity : entity.entity;
+        if (oldHass.states[entityId] !== element.hass.states[entityId]) {
             return true;
         }
     }
@@ -65,7 +66,9 @@ class HvvCard extends LitElement {
                     }
 
                 ${this._config.entities.map((ent) => {
-                    const stateObj = this.hass.states[ent];
+                    const entityId = typeof ent === 'string' ? ent : ent.entity;
+                    const customName = typeof ent === 'object' && ent.name ? ent.name : null;
+                    const stateObj = this.hass.states[entityId];
                     if (!stateObj) {
                         return html `
                             <style>
@@ -77,18 +80,20 @@ class HvvCard extends LitElement {
                             </style>
                             <ha-card>
                                 <div class="not-found">
-                                Entity not available: ${ent}
+                                Entity not available: ${entityId}
                                 </div>
                             </ha-card>
                             `;
                     }
 
+                    const displayName = customName || stateObj.attributes['friendly_name'];
+
                     if (stateObj.state == 'unavailable') {
                         return html`
                             <div>
-                                ${showName && stateObj.attributes['friendly_name']
+                                ${showName && displayName
                                     ? html`
-                                        <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
+                                        <h2 style="padding-left: 16px;">${displayName} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
                                     `
                                     : ""}
                             </div>
@@ -101,9 +106,9 @@ class HvvCard extends LitElement {
 
                     return html `
                     <div>
-                        ${showName && stateObj.attributes['friendly_name']
+                        ${showName && displayName
                         ? html`
-                            <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']}</h2>
+                            <h2 style="padding-left: 16px;">${displayName}</h2>
                             `
                         : ""
                         }
