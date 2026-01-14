@@ -28,8 +28,18 @@ class HvvCard extends LitElement {
     static get properties() {
         return {
             _config: {},
-            hass: {}
+            hass: {},
+            _timeOffset: { type: Number }
         };
+    }
+
+    constructor() {
+        super();
+        this._timeOffset = 0;
+    }
+
+    _onTimeOffsetChange(e) {
+        this._timeOffset = parseInt(e.target.value, 10) || 0;
     }
 
     setConfig(config) {
@@ -58,12 +68,19 @@ class HvvCard extends LitElement {
 
         return html `
              <ha-card>
-                ${showTitle ?
-                         html`
-                            <h1 class="card-header">${title}</h1>
-                        `
-                        : ""
+                <div class="header-row">
+                    ${showTitle ?
+                        html`<h1 class="card-header">${title}</h1>`
+                        : html`<span></span>`
                     }
+                    <div class="time-control">
+                        <label>in</label>
+                        <input type="number" min="0" max="120" 
+                               .value="${this._timeOffset}" 
+                               @change="${this._onTimeOffsetChange}">
+                        <span>min</span>
+                    </div>
+                </div>
 
                 ${this._config.entities.map((ent) => {
                     const entityId = typeof ent === 'string' ? ent : ent.entity;
@@ -101,6 +118,8 @@ class HvvCard extends LitElement {
                     }
 
                     const today = new Date();
+                    const offsetMs = this._timeOffset * 60 * 1000;
+                    const referenceTime = new Date(today.getTime() + offsetMs);
                     const max = this._config.max ? this._config.max : 5;
                     var count = 0;
 
@@ -120,6 +139,12 @@ class HvvCard extends LitElement {
                                 const delay_seconds = attr['delay'];
                                 const delay_minutes = (delay_seconds / 60);
                                 const departure = new Date(attr["departure"]);
+                                
+                                // Filter out departures before the reference time
+                                if (departure < referenceTime) {
+                                    return html``;
+                                }
+                                
                                 const diffMs = departure - today;
                                 const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
                                 const departureMins = Math.round((diffMs / (1000*60)) % 60);
@@ -166,6 +191,53 @@ class HvvCard extends LitElement {
 
     static get styles() {
         return css `
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right: 16px;
+        }
+        
+        .header-row .card-header {
+            padding: 24px 0 0 16px;
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+        
+        .time-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9em;
+            color: var(--secondary-text-color);
+            padding-top: 16px;
+        }
+        
+        .time-control label {
+            opacity: 0.7;
+        }
+        
+        .time-control input {
+            width: 48px;
+            padding: 4px 6px;
+            text-align: right;
+            border: 1px solid var(--divider-color, #e0e0e0);
+            border-radius: 4px;
+            background: var(--card-background-color, #fff);
+            color: var(--primary-text-color);
+            font-size: 0.95em;
+        }
+        
+        .time-control input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .time-control span {
+            opacity: 0.7;
+        }
+        
         table {
             width: 100%;
             padding: 6px 14px;
