@@ -15,7 +15,8 @@ function hasConfigOrEntityChanged(element, changedProps) {
     }
 
     for (const entity of element._config.entities) {
-        if (oldHass.states[entity] !== element.hass.states[entity]) {
+        const entityId = typeof entity === 'string' ? entity : entity.entity;
+        if (oldHass.states[entityId] !== element.hass.states[entityId]) {
             return true;
         }
     }
@@ -65,7 +66,9 @@ class HvvCard extends LitElement {
                     }
 
                 ${this._config.entities.map((ent) => {
-                    const stateObj = this.hass.states[ent];
+                    const entityId = typeof ent === 'string' ? ent : ent.entity;
+                    const customName = typeof ent === 'object' && ent.name ? ent.name : null;
+                    const stateObj = this.hass.states[entityId];
                     if (!stateObj) {
                         return html `
                             <style>
@@ -77,18 +80,20 @@ class HvvCard extends LitElement {
                             </style>
                             <ha-card>
                                 <div class="not-found">
-                                Entity not available: ${ent}
+                                Entity not available: ${entityId}
                                 </div>
                             </ha-card>
                             `;
                     }
 
+                    const displayName = customName || stateObj.attributes['friendly_name'];
+
                     if (stateObj.state == 'unavailable') {
                         return html`
                             <div>
-                                ${showName && stateObj.attributes['friendly_name']
+                                ${showName && displayName
                                     ? html`
-                                        <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
+                                        <h2 style="padding-left: 16px;">${displayName} <ha-icon icon="mdi:vector-polyline-remove" style="color: red;"></ha-icon></h2>
                                     `
                                     : ""}
                             </div>
@@ -101,9 +106,9 @@ class HvvCard extends LitElement {
 
                     return html `
                     <div>
-                        ${showName && stateObj.attributes['friendly_name']
+                        ${showName && displayName
                         ? html`
-                            <h2 style="padding-left: 16px;">${stateObj.attributes['friendly_name']}</h2>
+                            <h2 style="padding-left: 16px;">${displayName}</h2>
                             `
                         : ""
                         }
@@ -181,10 +186,16 @@ class HvvCard extends LitElement {
         span.line {
             font-weight: bold;
             font-size: 0.9em;
-            padding: 3px 8px 2px 8px;
+            padding: 3px 8px;
             color: #ffffff;
             background-color: #888888;
             margin-right: 0.7em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-width: 28px;
+            max-width: 32px;
         }
 
         span.delay_minutes {
@@ -203,8 +214,6 @@ class HvvCard extends LitElement {
         span.Bus, span.XpressBus, span.Schnellbus, span.NachtBus {
             background-color: #e2001a;
             clip-path: polygon(20% 0, 80% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
-            width: 48px;
-            margin-left: 0;
         }
 
         span.XpressBus {
@@ -220,9 +229,17 @@ class HvvCard extends LitElement {
             clip-path: polygon(0 0, 100% 0, 90% 100%, 10% 100%);
         }
 
-        span.ICE, span.RE, span.EC, span.IC, span.RB, span.R {
-            background-color: transparent;
+        span.ICE, span.EC, span.IC {
+            background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
+            color: #666666;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        span.RE, span.RB, span.R {
+            background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 50%, #e0e0e0 100%);
             color: #000;
+            border-radius: 4px;
         }
 
         span.U1 {
@@ -234,7 +251,7 @@ class HvvCard extends LitElement {
         }
 
         span.U3 {
-            background-color: #fddd00;
+            background: radial-gradient(circle, #d4c000 0%, #fddd00 100%);
         }
 
         span.U4 {
@@ -242,15 +259,15 @@ class HvvCard extends LitElement {
         }
 
         span.S1 {
-            background-color: #31962b;
+            background-color: #0bb14c;
         }
 
         span.S2 {
-            background-color: #b51143;
+            background-color: #b62851;
         }
 
         span.S3 {
-            background-color: #622181;
+            background-color: #642d91;
         }
 
         span.S4 {
@@ -258,19 +275,11 @@ class HvvCard extends LitElement {
         }
 
         span.S5 {
-            background-color: #008ABE;
+            background-color: #0094c2;
         }
 
-        span.S11 {
-            background-color: #31962b;
-        }
-
-        span.S21 {
-            background-color: #b51143;
-        }
-
-        span.S31 {
-            background-color: #622181;
+        span.S7 {
+            background-color: #cc771f;
         }
       `;
     }
