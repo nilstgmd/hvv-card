@@ -164,37 +164,43 @@ class HvvCard extends LitElement {
                                 const delay_seconds = attr['delay'];
                                 const delay_minutes = (delay_seconds / 60);
                                 const departure = new Date(attr["departure"]);
+                                const cancelled = attr['cancelled'] || false;
                                 
                                 const diffMs = departure - today;
                                 const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
                                 const departureMins = Math.round((diffMs / (1000*60)) % 60);
 
                                 return html`
-                                    <tr>
+                                    <tr class="${cancelled ? 'cancelled' : ''}">
                                         <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
-                                        <td class="expand">${direction}</td>
+                                        <td class="expand">${cancelled ? html`<s>${direction}</s>` : direction}</td>
                                         <td class="narrow" style="text-align:right;">
-                                            ${this._config.show_time ?
-                                                departure.toLocaleTimeString(
-                                                    this.hass.locale.language,
-                                                    {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: this.hass.locale.time_format === '12'
+                                            ${cancelled
+                                                ? html`<span class="cancelled-badge">Cancelled</span>`
+                                                : html`
+                                                    ${this._config.show_time ?
+                                                        departure.toLocaleTimeString(
+                                                            this.hass.locale.language,
+                                                            {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                                hour12: this.hass.locale.time_format === '12'
+                                                            }
+                                                        ) :
+                                                        departureHours > 0 ?
+                                                            departureHours + `:` + departureMins :
+                                                            departureMins
                                                     }
-                                                ) :
-                                                departureHours > 0 ?
-                                                    departureHours + `:` + departureMins :
-                                                    departureMins
-                                            }
-                                            ${delay_minutes > 0 ?
-                                                html`<span class="delay_minutes">+${delay_minutes}</span>` :
-                                                ``}
-                                            ${delay_minutes <= 0 && this._config.show_time ?
-                                                `` :
-                                                departureHours > 0 ?
-                                                    `h:min` :
-                                                    `min`
+                                                    ${delay_minutes > 0 ?
+                                                        html`<span class="delay_minutes">+${delay_minutes}</span>` :
+                                                        ``}
+                                                    ${delay_minutes <= 0 && this._config.show_time ?
+                                                        `` :
+                                                        departureHours > 0 ?
+                                                            `h:min` :
+                                                            `min`
+                                                    }
+                                                `
                                             }
                                         </td>
                                     </tr>
@@ -301,6 +307,16 @@ class HvvCard extends LitElement {
             padding: 8px 16px;
             color: var(--secondary-text-color);
             font-style: italic;
+        }
+
+        tr.cancelled {
+            opacity: 0.6;
+        }
+
+        .cancelled-badge {
+            color: #e2001a;
+            font-weight: bold;
+            font-size: 0.85em;
         }
 
         span.S, span.A{
