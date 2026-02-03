@@ -122,6 +122,17 @@ class HvvCard extends LitElement {
                         `;
                     }
 
+                    if (!stateObj.attributes['next'] || stateObj.attributes['next'].length === 0) {
+                        return html`
+                            <div>
+                                ${showName && displayName
+                                    ? html`<h2 style="padding-left: 16px;">${displayName}</h2>`
+                                    : ""}
+                                <p class="no-departures">No departures</p>
+                            </div>
+                        `;
+                    }
+
                     const today = new Date();
                     const offsetMs = this._timeOffset * 60 * 1000;
                     const referenceTime = new Date(today.getTime() + offsetMs);
@@ -284,6 +295,12 @@ class HvvCard extends LitElement {
 
         span.delay_minutes {
              color: #e2001a;
+        }
+
+        .no-departures {
+            padding: 8px 16px;
+            color: var(--secondary-text-color);
+            font-style: italic;
         }
 
         span.S, span.A{
