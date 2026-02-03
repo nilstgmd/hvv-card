@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/nilstgmd/hvv-card/compare/v0.4.1...v0.5.0) (2026-02-03)
+
+
+### Features
+
+* add visual configuration editor ([#41](https://github.com/nilstgmd/hvv-card/issues/41)) ([f4f2cca](https://github.com/nilstgmd/hvv-card/commit/f4f2cca5b366e29c9476cbbc7621fce3aefb552b))
+
 ## [0.4.1](https://github.com/nilstgmd/hvv-card/compare/v0.4.0...v0.4.1) (2026-02-03)
 
 
