@@ -58,6 +58,7 @@ entities:
 | max | int | optional (Default: 5) | v0.1.0 | Set the max. listed departures |
 | show_time | boolean | optional (Default: false) | v0.1.7 | Shows the departure time instead of the minutes |
 | show_name | boolean | optional (Default: true) | v0.2.0 | Shows the name of the departure sensor |
+| show_time_filter | boolean | optional (Default: true) | v0.3.0 | Shows the time filter input that allows filtering departures by a future time offset in minutes |
 
 #### Example
 
@@ -72,6 +73,7 @@ max: 10
 show_time: false
 show_title: true
 show_name: false
+show_time_filter: true
 title: HVV
 ```
 

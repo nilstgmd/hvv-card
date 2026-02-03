@@ -65,14 +65,17 @@ class HvvCard extends LitElement {
         var title = this._config.title ? this._config.title : "HVV Departures";
         var showTitle = this._config.show_title !== false;
         var showName = this._config.show_name !== false;
+        var showTimeFilter = this._config.show_time_filter !== false;
 
         return html `
              <ha-card>
+                ${showTitle || showTimeFilter ? html`
                 <div class="header-row">
                     ${showTitle ?
                         html`<h1 class="card-header">${title}</h1>`
                         : html`<span></span>`
                     }
+                    ${showTimeFilter ? html`
                     <div class="time-control">
                         <label>in</label>
                         <input type="number" min="0" max="120" 
@@ -80,7 +83,9 @@ class HvvCard extends LitElement {
                                @change="${this._onTimeOffsetChange}">
                         <span>min</span>
                     </div>
+                    ` : ''}
                 </div>
+                ` : ''}
 
                 ${this._config.entities.map((ent) => {
                     const entityId = typeof ent === 'string' ? ent : ent.entity;
