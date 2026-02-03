@@ -137,7 +137,16 @@ class HvvCard extends LitElement {
                     const offsetMs = this._timeOffset * 60 * 1000;
                     const referenceTime = new Date(today.getTime() + offsetMs);
                     const max = this._config.max ? this._config.max : 5;
-                    var count = 0;
+
+                    // Filter departures by reference time, sort by actual departure (scheduled + delay), and limit
+                    const filteredDepartures = stateObj.attributes['next']
+                        .filter(attr => new Date(attr.departure) >= referenceTime)
+                        .sort((a, b) => {
+                            const aActual = new Date(a.departure).getTime() + (a.delay || 0) * 1000;
+                            const bActual = new Date(b.departure).getTime() + (b.delay || 0) * 1000;
+                            return aActual - bActual;
+                        })
+                        .slice(0, max);
 
                     return html `
                     <div>
@@ -148,7 +157,7 @@ class HvvCard extends LitElement {
                         : ""
                         }
                         <table>
-                            ${stateObj.attributes['next'].map(attr => {
+                            ${filteredDepartures.map(attr => {
                                 const direction = attr['direction'];
                                 const line = attr['line'];
                                 const type = attr['type'];
@@ -156,19 +165,11 @@ class HvvCard extends LitElement {
                                 const delay_minutes = (delay_seconds / 60);
                                 const departure = new Date(attr["departure"]);
                                 
-                                // Filter out departures before the reference time
-                                if (departure < referenceTime) {
-                                    return html``;
-                                }
-                                
                                 const diffMs = departure - today;
                                 const departureHours = Math.floor((diffMs / (1000*60*60)) % 24);
                                 const departureMins = Math.round((diffMs / (1000*60)) % 60);
 
-                                count++;
-
-                                return count <= max
-                                ? html`
+                                return html`
                                     <tr>
                                         <td class="narrow" style="text-align:center;"><span class="line ${type} ${line}">${line}</span></td>
                                         <td class="expand">${direction}</td>
@@ -197,8 +198,7 @@ class HvvCard extends LitElement {
                                             }
                                         </td>
                                     </tr>
-                                    `
-                                : html ``;
+                                    `;
                             })}
                         </table>
                     </div>
