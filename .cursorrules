@@ -1,0 +1,108 @@
+# HVV Card - Cursor Rules
+
+## Project Overview
+
+This is a custom Home Assistant Lovelace card for displaying HVV (Hamburg public transit) departures. It's built using LitElement and integrates with the HVV Departures integration.
+
+## Development Workflow
+
+### Branch Strategy
+- **Never commit directly to main** - all changes must go through a separate branch and PR
+- Branch naming conventions:
+  - `fix/` - for bug fixes (e.g., `fix/sort-departures-by-actual-time`)
+  - `feat/` - for new features (e.g., `feat/display-cancelled-departures`)
+  - `docs/` - for documentation changes
+  - `refactor/` - for code refactoring
+
+### Pull Request Process
+1. Create a feature branch from `main`
+2. Make changes with appropriate commits
+3. Run tests locally before pushing: `npm test`
+4. Push branch and create PR with clear title and description
+5. Reference related GitHub issues in PR description (e.g., "Fixes #25")
+
+### Documentation Requirements
+- **Always update README.md** when adding new features or changing behavior
+- Document new configuration options in the Options table
+- Add new features to the Features section
+- Keep the Development section up to date
+
+### Testing Requirements
+- **Add tests for all new functionality** when possible
+- Tests are located in `tests/hvv-card.test.js`
+- Run tests with `npm test`
+- The project uses Jest with jsdom environment
+- Mock the LitElement base class in tests (see existing test patterns)
+
+## Code Style
+
+### JavaScript
+- Use `const` and `let`, avoid `var`
+- Use template literals for HTML rendering
+- Follow existing indentation (4 spaces in hvv-card.js)
+- Keep functions focused and single-purpose
+
+### CSS
+- CSS is defined in the static `styles` getter using `css` template literal
+- Use CSS custom properties for theming (e.g., `var(--primary-color)`)
+- Follow HVV brand colors for transit line styling
+
+## Project Structure
+
+```
+hvv-card/
+├── hvv-card.js          # Main card component (LitElement)
+├── tests/
+│   └── hvv-card.test.js # Jest tests
+├── hacs.json            # HACS configuration
+├── README.md            # Documentation
+├── package.json         # Dependencies and scripts
+└── .github/workflows/   # CI/CD (test.yml)
+```
+
+## Key Technical Details
+
+### HVV Departures Data Structure
+The HVV Departures integration provides sensor data with:
+- `state`: "ok" or "unavailable"
+- `attributes.next`: Array of departure objects
+- `attributes.friendly_name`: Station name
+
+Each departure object contains:
+- `line`: Line number/name (e.g., "U1", "X35")
+- `direction`: Destination
+- `type`: Transport type ("U", "S", "Bus", etc.)
+- `departure`: ISO timestamp of scheduled departure
+- `delay`: Delay in seconds (0 if on time)
+- `cancelled`: Boolean indicating if cancelled
+
+### Sorting Logic
+Departures are sorted by actual departure time: `scheduled_time + delay`
+
+### Error Handling
+- Show warning icon when sensor is "unavailable"
+- Show "No departures" message when `next` array is empty or missing
+- Show "Entity not available" when entity doesn't exist
+
+## Common Patterns
+
+### Adding a New Feature
+1. Create feature branch: `git checkout -b feat/feature-name`
+2. Update `hvv-card.js` with the implementation
+3. Add tests in `tests/hvv-card.test.js`
+4. Update README.md Features section and Options table if applicable
+5. Run `npm test` to verify
+6. Commit, push, and create PR
+
+### Fixing a Bug
+1. Create fix branch: `git checkout -b fix/bug-description`
+2. Add a failing test that reproduces the bug
+3. Fix the bug in `hvv-card.js`
+4. Verify test passes
+5. Update README.md if behavior changed
+6. Commit, push, and create PR
+
+## External Resources
+- [HVV Departures Integration](https://www.home-assistant.io/integrations/hvv_departures)
+- [HACS Documentation](https://hacs.xyz/)
+- [LitElement Documentation](https://lit.dev/)
