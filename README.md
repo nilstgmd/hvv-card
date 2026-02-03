@@ -10,6 +10,17 @@ This custom UI card shows the next departures at a certain station based on the 
 ![HVV Card dark](https://github.com/nilstgmd/hvv-card/blob/main/hvv-card.png)
 ![HVV Card light](https://github.com/nilstgmd/hvv-card/blob/main/hvv-card-light.png)
 
+## Features
+
+- Displays upcoming departures with line, direction, and time
+- Departures sorted by actual arrival time (scheduled time + delay)
+- Delay information displayed in red when trains/buses are running late
+- Cancelled departures shown with strikethrough and "Cancelled" badge
+- Graceful handling when no departures are available ("No departures" message)
+- Time filter to show departures after a specified offset
+- Support for multiple stations in a single card
+- Visual styling matching HVV line colors (U-Bahn, S-Bahn, Bus, etc.)
+
 
 ## Installation
 
@@ -83,7 +94,5 @@ Install dependencies and run the tests with:
 
 ```bash
 npm install
-=======
-Run the tests with:
 npm test
 ```
