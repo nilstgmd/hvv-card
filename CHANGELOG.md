@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/nilstgmd/hvv-card/compare/v0.4.0...v0.4.1) (2026-02-03)
+
+
+### Bug Fixes
+
+* revert homeassistant minimum version to 2024.1.0 ([#39](https://github.com/nilstgmd/hvv-card/issues/39)) ([1a66e3b](https://github.com/nilstgmd/hvv-card/commit/1a66e3b6b8d6dadc14a76479671e96b56dc383d1))
+
 ## [0.4.0](https://github.com/nilstgmd/hvv-card/compare/0.3.2...v0.4.0) (2026-02-03)
 
 
