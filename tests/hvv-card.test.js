@@ -440,4 +440,124 @@ describe('hvv-card custom element', () => {
       expect(output).not.toContain('<s>Running</s>');
     });
   });
+
+  describe('visual config editor', () => {
+    test('defines hvv-card-editor element', () => {
+      require('../hvv-card.js');
+      expect(customElements.get('hvv-card-editor')).toBeDefined();
+    });
+
+    test('HvvCard has getConfigElement static method', () => {
+      require('../hvv-card.js');
+      const HvvCard = customElements.get('hvv-card');
+      expect(HvvCard.getConfigElement).toBeDefined();
+      expect(typeof HvvCard.getConfigElement).toBe('function');
+    });
+
+    test('getConfigElement returns hvv-card-editor element', () => {
+      require('../hvv-card.js');
+      const HvvCard = customElements.get('hvv-card');
+      const editor = HvvCard.getConfigElement();
+      expect(editor.tagName.toLowerCase()).toBe('hvv-card-editor');
+    });
+
+    test('HvvCard has getStubConfig static method', () => {
+      require('../hvv-card.js');
+      const HvvCard = customElements.get('hvv-card');
+      expect(HvvCard.getStubConfig).toBeDefined();
+      expect(typeof HvvCard.getStubConfig).toBe('function');
+    });
+
+    test('getStubConfig returns default configuration', () => {
+      require('../hvv-card.js');
+      const HvvCard = customElements.get('hvv-card');
+      const stubConfig = HvvCard.getStubConfig();
+      
+      expect(stubConfig).toEqual({
+        entities: [],
+        title: "HVV Departures",
+        max: 5,
+        show_title: true,
+        show_name: true,
+        show_time: false,
+        show_time_filter: true
+      });
+    });
+
+    test('editor setConfig stores configuration', () => {
+      require('../hvv-card.js');
+      const editor = document.createElement('hvv-card-editor');
+      const config = {
+        entities: ['sensor.test'],
+        title: 'Test Title',
+        max: 10
+      };
+      
+      editor.setConfig(config);
+      expect(editor._config).toEqual(config);
+    });
+
+    test('editor renders form fields', () => {
+      require('../hvv-card.js');
+      const editor = document.createElement('hvv-card-editor');
+      editor.setConfig({
+        entities: ['sensor.test'],
+        title: 'Test Title',
+        max: 5
+      });
+      editor.hass = {
+        states: {
+          'sensor.test': {
+            state: 'ok',
+            attributes: { next: [] }
+          }
+        }
+      };
+
+      const output = String(editor.render());
+      expect(output).toContain('Title');
+      expect(output).toContain('Max Departures');
+      expect(output).toContain('Entities');
+      expect(output).toContain('Show Title');
+      expect(output).toContain('Show Station Name');
+      expect(output).toContain('Show Absolute Time');
+      expect(output).toContain('Show Time Filter');
+    });
+
+    test('editor getter methods return correct defaults', () => {
+      require('../hvv-card.js');
+      const editor = document.createElement('hvv-card-editor');
+      editor.setConfig({});
+
+      expect(editor._entities).toEqual([]);
+      expect(editor._title).toBe('HVV Departures');
+      expect(editor._max).toBe(5);
+      expect(editor._show_title).toBe(true);
+      expect(editor._show_name).toBe(true);
+      expect(editor._show_time).toBe(false);
+      expect(editor._show_time_filter).toBe(true);
+    });
+
+    test('editor getter methods return configured values', () => {
+      require('../hvv-card.js');
+      const editor = document.createElement('hvv-card-editor');
+      editor.setConfig({
+        entities: ['sensor.a', 'sensor.b'],
+        title: 'Custom Title',
+        max: 10,
+        show_title: false,
+        show_name: false,
+        show_time: true,
+        show_time_filter: false
+      });
+
+      expect(editor._entities).toEqual(['sensor.a', 'sensor.b']);
+      expect(editor._title).toBe('Custom Title');
+      expect(editor._max).toBe(10);
+      expect(editor._show_title).toBe(false);
+      expect(editor._show_name).toBe(false);
+      expect(editor._show_time).toBe(true);
+      expect(editor._show_time_filter).toBe(false);
+    });
+  });
 });

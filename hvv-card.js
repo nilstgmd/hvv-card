@@ -33,6 +33,22 @@ class HvvCard extends LitElement {
         };
     }
 
+    static getConfigElement() {
+        return document.createElement("hvv-card-editor");
+    }
+
+    static getStubConfig() {
+        return {
+            entities: [],
+            title: "HVV Departures",
+            max: 5,
+            show_title: true,
+            show_name: true,
+            show_time: false,
+            show_time_filter: true
+        };
+    }
+
     constructor() {
         super();
         this._timeOffset = 0;
@@ -402,3 +418,328 @@ class HvvCard extends LitElement {
     }
 }
 customElements.define("hvv-card", HvvCard);
+
+class HvvCardEditor extends LitElement {
+    static get properties() {
+        return {
+            hass: {},
+            _config: {}
+        };
+    }
+
+    setConfig(config) {
+        this._config = config;
+    }
+
+    get _entities() {
+        return this._config.entities || [];
+    }
+
+    get _title() {
+        return this._config.title || "HVV Departures";
+    }
+
+    get _max() {
+        return this._config.max || 5;
+    }
+
+    get _show_title() {
+        return this._config.show_title !== false;
+    }
+
+    get _show_name() {
+        return this._config.show_name !== false;
+    }
+
+    get _show_time() {
+        return this._config.show_time || false;
+    }
+
+    get _show_time_filter() {
+        return this._config.show_time_filter !== false;
+    }
+
+    render() {
+        if (!this.hass) {
+            return html``;
+        }
+
+        // Get all HVV departure entities
+        const hvvEntities = Object.keys(this.hass.states)
+            .filter(entityId => {
+                const state = this.hass.states[entityId];
+                return state.attributes && state.attributes.next !== undefined;
+            })
+            .sort();
+
+        return html`
+            <div class="card-config">
+                <div class="config-row">
+                    <label>Title</label>
+                    <input
+                        type="text"
+                        .value="${this._title}"
+                        @input="${this._valueChanged}"
+                        .configValue="${"title"}"
+                    />
+                </div>
+
+                <div class="config-row">
+                    <label>Max Departures</label>
+                    <input
+                        type="number"
+                        min="1"
+                        max="20"
+                        .value="${this._max}"
+                        @input="${this._valueChanged}"
+                        .configValue="${"max"}"
+                    />
+                </div>
+
+                <div class="config-row">
+                    <label>Entities</label>
+                    <div class="entities-list">
+                        ${this._entities.map((entity, index) => {
+                            const entityId = typeof entity === 'string' ? entity : entity.entity;
+                            return html`
+                                <div class="entity-row">
+                                    <select
+                                        .value="${entityId}"
+                                        @change="${(e) => this._entityChanged(e, index)}"
+                                    >
+                                        <option value="">Select entity...</option>
+                                        ${hvvEntities.map(e => html`
+                                            <option value="${e}" ?selected="${e === entityId}">${e}</option>
+                                        `)}
+                                    </select>
+                                    <button class="remove-btn" @click="${() => this._removeEntity(index)}">✕</button>
+                                </div>
+                            `;
+                        })}
+                        <button class="add-btn" @click="${this._addEntity}">+ Add Entity</button>
+                    </div>
+                </div>
+
+                <div class="config-row switches">
+                    <label class="switch-label">
+                        <input
+                            type="checkbox"
+                            .checked="${this._show_title}"
+                            @change="${this._valueChanged}"
+                            .configValue="${"show_title"}"
+                        />
+                        Show Title
+                    </label>
+
+                    <label class="switch-label">
+                        <input
+                            type="checkbox"
+                            .checked="${this._show_name}"
+                            @change="${this._valueChanged}"
+                            .configValue="${"show_name"}"
+                        />
+                        Show Station Name
+                    </label>
+
+                    <label class="switch-label">
+                        <input
+                            type="checkbox"
+                            .checked="${this._show_time}"
+                            @change="${this._valueChanged}"
+                            .configValue="${"show_time"}"
+                        />
+                        Show Absolute Time
+                    </label>
+
+                    <label class="switch-label">
+                        <input
+                            type="checkbox"
+                            .checked="${this._show_time_filter}"
+                            @change="${this._valueChanged}"
+                            .configValue="${"show_time_filter"}"
+                        />
+                        Show Time Filter
+                    </label>
+                </div>
+            </div>
+        `;
+    }
+
+    _valueChanged(ev) {
+        if (!this._config || !this.hass) {
+            return;
+        }
+
+        const target = ev.target;
+        const configValue = target.configValue;
+
+        let newValue;
+        if (target.type === "checkbox") {
+            newValue = target.checked;
+        } else if (target.type === "number") {
+            newValue = parseInt(target.value, 10);
+        } else {
+            newValue = target.value;
+        }
+
+        if (this._config[configValue] === newValue) {
+            return;
+        }
+
+        const newConfig = { ...this._config };
+        if (newValue === "" || newValue === undefined) {
+            delete newConfig[configValue];
+        } else {
+            newConfig[configValue] = newValue;
+        }
+
+        this._config = newConfig;
+        this._fireConfigChanged();
+    }
+
+    _entityChanged(ev, index) {
+        const newValue = ev.target.value;
+        const newEntities = [...this._entities];
+        
+        if (newValue === "") {
+            newEntities.splice(index, 1);
+        } else {
+            newEntities[index] = newValue;
+        }
+
+        this._config = { ...this._config, entities: newEntities };
+        this._fireConfigChanged();
+    }
+
+    _addEntity() {
+        const newEntities = [...this._entities, ""];
+        this._config = { ...this._config, entities: newEntities };
+        this._fireConfigChanged();
+    }
+
+    _removeEntity(index) {
+        const newEntities = [...this._entities];
+        newEntities.splice(index, 1);
+        this._config = { ...this._config, entities: newEntities };
+        this._fireConfigChanged();
+    }
+
+    _fireConfigChanged() {
+        const event = new CustomEvent("config-changed", {
+            detail: { config: this._config },
+            bubbles: true,
+            composed: true
+        });
+        this.dispatchEvent(event);
+    }
+
+    static get styles() {
+        return css`
+            .card-config {
+                padding: 16px;
+            }
+
+            .config-row {
+                margin-bottom: 16px;
+            }
+
+            .config-row > label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: var(--primary-text-color);
+            }
+
+            .config-row input[type="text"],
+            .config-row input[type="number"] {
+                width: 100%;
+                padding: 8px 12px;
+                border: 1px solid var(--divider-color, #e0e0e0);
+                border-radius: 4px;
+                background: var(--card-background-color, #fff);
+                color: var(--primary-text-color);
+                font-size: 14px;
+                box-sizing: border-box;
+            }
+
+            .config-row input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            .entities-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .entity-row {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .entity-row select {
+                flex: 1;
+                padding: 8px 12px;
+                border: 1px solid var(--divider-color, #e0e0e0);
+                border-radius: 4px;
+                background: var(--card-background-color, #fff);
+                color: var(--primary-text-color);
+                font-size: 14px;
+            }
+
+            .remove-btn {
+                padding: 8px 12px;
+                border: none;
+                border-radius: 4px;
+                background: var(--error-color, #db4437);
+                color: white;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            .remove-btn:hover {
+                opacity: 0.8;
+            }
+
+            .add-btn {
+                padding: 8px 16px;
+                border: 1px dashed var(--divider-color, #e0e0e0);
+                border-radius: 4px;
+                background: transparent;
+                color: var(--primary-color);
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            .add-btn:hover {
+                background: var(--primary-color);
+                color: white;
+                border-style: solid;
+            }
+
+            .switches {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .switch-label {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                font-weight: normal;
+            }
+
+            .switch-label input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+        `;
+    }
+}
+
+customElements.define("hvv-card-editor", HvvCardEditor);

@@ -13,6 +13,7 @@ This custom UI card shows the next departures at a certain station based on the 
 
 ## Features
 
+- **Visual Configuration Editor** - Configure the card through the UI without writing YAML
 - Displays upcoming departures with line, direction, and time
 - Departures sorted by actual arrival time (scheduled time + delay)
 - Delay information displayed in red when trains/buses are running late
@@ -50,7 +51,17 @@ resources:
 
 ### Configuration
 
-Add a card with type `custom:hvv-card`:
+#### Visual Editor
+
+The easiest way to configure the card is through the visual editor:
+
+1. Add a new card to your dashboard
+2. Search for "HVV" or "Custom: HVV Card"
+3. Use the visual editor to configure entities and options
+
+#### YAML Configuration
+
+Alternatively, add a card with type `custom:hvv-card`:
 
 ```yaml
 type: 'custom:hvv-card'
