@@ -3,5 +3,7 @@
     "content_in_root": true,
     "filename": "hvv-card.js",
     "country": ["DE"],
-    "render_readme": true
+    "render_readme": true,
+    "homeassistant": "2026.1",
+    "hacs": "2.0.0"
 }
