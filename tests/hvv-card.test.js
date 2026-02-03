@@ -334,4 +334,110 @@ describe('hvv-card custom element', () => {
       expect(withDelayIndex).toBeLessThan(noDelayIndex);
     });
   });
+
+  describe('cancelled departures', () => {
+    function createCardWithDepartures(departures, config = {}) {
+      const card = document.createElement('hvv-card');
+      card.setConfig({ entities: ['sensor.departures'], ...config });
+      card.hass = {
+        states: {
+          'sensor.departures': {
+            state: 'ok',
+            attributes: {
+              friendly_name: 'Test Station',
+              next: departures
+            }
+          }
+        }
+      };
+      return card;
+    }
+
+    test('displays cancelled badge for cancelled departures', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'Cancelled Train', type: 'U', delay: 0, cancelled: true, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      expect(output).toContain('cancelled-badge');
+      expect(output).toContain('Cancelled');
+    });
+
+    test('shows strikethrough for cancelled departure direction', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'Cancelled Train', type: 'U', delay: 0, cancelled: true, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      expect(output).toContain('<s>Cancelled Train</s>');
+    });
+
+    test('applies cancelled CSS class to row', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'Cancelled Train', type: 'U', delay: 0, cancelled: true, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      expect(output).toContain('class="cancelled"');
+    });
+
+    test('does not show cancelled styling for normal departures', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'Normal Train', type: 'U', delay: 0, cancelled: false, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      expect(output).not.toContain('cancelled-badge');
+      expect(output).not.toContain('<s>Normal Train</s>');
+      expect(output).toContain('Normal Train');
+    });
+
+    test('handles missing cancelled field gracefully', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'No Cancelled Field', type: 'U', delay: 0, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      expect(output).not.toContain('cancelled-badge');
+      expect(output).not.toContain('<s>');
+      expect(output).toContain('No Cancelled Field');
+    });
+
+    test('displays mixed cancelled and normal departures correctly', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'Cancelled', type: 'U', delay: 0, cancelled: true, departure: new Date(now.getTime() + 5 * 60000).toISOString() },
+        { line: 'U2', direction: 'Running', type: 'U', delay: 0, cancelled: false, departure: new Date(now.getTime() + 10 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      expect(output).toContain('<s>Cancelled</s>');
+      expect(output).toContain('cancelled-badge');
+      expect(output).toContain('Running');
+      expect(output).not.toContain('<s>Running</s>');
+    });
+  });
 });
