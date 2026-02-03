@@ -238,4 +238,100 @@ describe('hvv-card custom element', () => {
       expect(output).toContain('Hauptbahnhof');
     });
   });
+
+  describe('departure sorting by actual time', () => {
+    function createCardWithDepartures(departures, config = {}) {
+      const card = document.createElement('hvv-card');
+      card.setConfig({ entities: ['sensor.departures'], ...config });
+      card.hass = {
+        states: {
+          'sensor.departures': {
+            state: 'ok',
+            attributes: {
+              friendly_name: 'Test Station',
+              next: departures
+            }
+          }
+        }
+      };
+      return card;
+    }
+
+    test('sorts departures by actual time when delays change order', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      // X35 is scheduled first but has 3 min delay, so 261 should appear first
+      const departures = [
+        { line: 'X35', direction: 'Delayed Bus', type: 'Bus', delay: 180, departure: new Date(now.getTime() + 8 * 60000).toISOString() },
+        { line: '261', direction: 'On Time Bus', type: 'Bus', delay: 0, departure: new Date(now.getTime() + 10 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      // 261 should appear before X35 because:
+      // X35 actual: 8min + 3min delay = 11min
+      // 261 actual: 10min + 0 delay = 10min
+      const onTimeIndex = output.indexOf('On Time Bus');
+      const delayedIndex = output.indexOf('Delayed Bus');
+      expect(onTimeIndex).toBeLessThan(delayedIndex);
+    });
+
+    test('maintains order when no delays affect sorting', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'First', type: 'U', delay: 0, departure: new Date(now.getTime() + 5 * 60000).toISOString() },
+        { line: 'U2', direction: 'Second', type: 'U', delay: 0, departure: new Date(now.getTime() + 10 * 60000).toISOString() },
+        { line: 'U3', direction: 'Third', type: 'U', delay: 0, departure: new Date(now.getTime() + 15 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      const firstIndex = output.indexOf('First');
+      const secondIndex = output.indexOf('Second');
+      const thirdIndex = output.indexOf('Third');
+      expect(firstIndex).toBeLessThan(secondIndex);
+      expect(secondIndex).toBeLessThan(thirdIndex);
+    });
+
+    test('sorts correctly with multiple delayed departures', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      // All buses have delays that reorder them
+      const departures = [
+        { line: 'A', direction: 'Bus A', type: 'Bus', delay: 600, departure: new Date(now.getTime() + 5 * 60000).toISOString() },  // actual: 15min
+        { line: 'B', direction: 'Bus B', type: 'Bus', delay: 120, departure: new Date(now.getTime() + 7 * 60000).toISOString() },  // actual: 9min
+        { line: 'C', direction: 'Bus C', type: 'Bus', delay: 0, departure: new Date(now.getTime() + 12 * 60000).toISOString() }    // actual: 12min
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      // Expected order by actual time: B (9min), C (12min), A (15min)
+      const busAIndex = output.indexOf('Bus A');
+      const busBIndex = output.indexOf('Bus B');
+      const busCIndex = output.indexOf('Bus C');
+      expect(busBIndex).toBeLessThan(busCIndex);
+      expect(busCIndex).toBeLessThan(busAIndex);
+    });
+
+    test('handles missing delay field gracefully', () => {
+      require('../hvv-card.js');
+      const now = new Date();
+      const departures = [
+        { line: 'U1', direction: 'No Delay Field', type: 'U', departure: new Date(now.getTime() + 10 * 60000).toISOString() },
+        { line: 'U2', direction: 'With Delay', type: 'U', delay: 0, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+      ];
+      const card = createCardWithDepartures(departures);
+      card._timeOffset = 0;
+
+      const output = String(card.render());
+      // U2 at 5min should come before U1 at 10min
+      const noDelayIndex = output.indexOf('No Delay Field');
+      const withDelayIndex = output.indexOf('With Delay');
+      expect(withDelayIndex).toBeLessThan(noDelayIndex);
+    });
+  });
 });
