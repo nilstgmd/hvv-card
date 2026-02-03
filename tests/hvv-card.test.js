@@ -162,4 +162,80 @@ describe('hvv-card custom element', () => {
       expect(card._timeOffset).toBe(0);
     });
   });
+
+  describe('empty departures handling', () => {
+    test('shows "No departures" when next array is empty', () => {
+      require('../hvv-card.js');
+      const card = document.createElement('hvv-card');
+      card.setConfig({ entities: ['sensor.empty'] });
+      card.hass = {
+        states: {
+          'sensor.empty': {
+            state: 'ok',
+            attributes: {
+              friendly_name: 'Empty Station',
+              next: []
+            }
+          }
+        }
+      };
+
+      const output = String(card.render());
+      expect(output).toContain('No departures');
+      expect(output).toContain('Empty Station');
+    });
+
+    test('shows "No departures" when next attribute is missing', () => {
+      require('../hvv-card.js');
+      const card = document.createElement('hvv-card');
+      card.setConfig({ entities: ['sensor.missing'] });
+      card.hass = {
+        states: {
+          'sensor.missing': {
+            state: 'ok',
+            attributes: {
+              friendly_name: 'Missing Next Station'
+            }
+          }
+        }
+      };
+
+      const output = String(card.render());
+      expect(output).toContain('No departures');
+      expect(output).toContain('Missing Next Station');
+    });
+
+    test('renders other entities when one has no departures', () => {
+      require('../hvv-card.js');
+      const card = document.createElement('hvv-card');
+      card.setConfig({ entities: ['sensor.empty', 'sensor.hasdata'] });
+      const now = new Date();
+      card.hass = {
+        states: {
+          'sensor.empty': {
+            state: 'ok',
+            attributes: {
+              friendly_name: 'Empty Station',
+              next: []
+            }
+          },
+          'sensor.hasdata': {
+            state: 'ok',
+            attributes: {
+              friendly_name: 'Working Station',
+              next: [
+                { line: 'U1', direction: 'Hauptbahnhof', type: 'U', delay: 0, departure: new Date(now.getTime() + 5 * 60000).toISOString() }
+              ]
+            }
+          }
+        }
+      };
+
+      const output = String(card.render());
+      expect(output).toContain('No departures');
+      expect(output).toContain('Empty Station');
+      expect(output).toContain('Working Station');
+      expect(output).toContain('Hauptbahnhof');
+    });
+  });
 });
