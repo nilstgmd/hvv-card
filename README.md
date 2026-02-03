@@ -2,6 +2,7 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge)](https://github.com/custom-components/hacs)
 [![release badge](https://img.shields.io/github/v/release/nilstgmd/hvv-card.svg?style=for-the-badge)](https://github.com/nilstgmd/hvv-card/releases)
+[![validate](https://img.shields.io/github/actions/workflow/status/nilstgmd/hvv-card/validate.yml?label=validate&style=for-the-badge)](https://github.com/nilstgmd/hvv-card/actions/workflows/validate.yml)
 
 HVV departures card for Home Assistant.
 
@@ -96,3 +97,16 @@ Install dependencies and run the tests with:
 npm install
 npm test
 ```
+
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
+
+- Development setup
+- Branch naming conventions
+- Commit message format (Conventional Commits)
+- Pull request process
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

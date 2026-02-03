@@ -51,13 +51,22 @@ This is a custom Home Assistant Lovelace card for displaying HVV (Hamburg public
 
 ```
 hvv-card/
-├── hvv-card.js          # Main card component (LitElement)
+├── hvv-card.js              # Main card component (LitElement)
 ├── tests/
-│   └── hvv-card.test.js # Jest tests
-├── hacs.json            # HACS configuration
-├── README.md            # Documentation
-├── package.json         # Dependencies and scripts
-└── .github/workflows/   # CI/CD (test.yml)
+│   └── hvv-card.test.js     # Jest tests
+├── .github/
+│   ├── workflows/
+│   │   ├── validate.yml     # HACS validation + tests
+│   │   └── release.yml      # Automated releases with release-please
+│   ├── ISSUE_TEMPLATE/      # Bug report and feature request templates
+│   └── PULL_REQUEST_TEMPLATE.md
+├── hacs.json                # HACS configuration
+├── info.md                  # HACS UI description
+├── README.md                # Documentation
+├── CONTRIBUTING.md          # Contribution guidelines
+├── package.json             # Dependencies and scripts
+├── release-please-config.json    # Release-please configuration
+└── .release-please-manifest.json # Current version tracking
 ```
 
 ## Key Technical Details
@@ -101,6 +110,29 @@ Departures are sorted by actual departure time: `scheduled_time + delay`
 4. Verify test passes
 5. Update README.md if behavior changed
 6. Commit, push, and create PR
+
+## CI/CD Workflows
+
+### Validation (validate.yml)
+Runs on every push, PR, and daily:
+- HACS validation using official `hacs/action`
+- Jest tests with Node.js 20
+
+### Releases (release.yml)
+Automated with release-please:
+- Creates release PRs from conventional commits
+- Auto-generates CHANGELOG.md
+- Publishes GitHub releases on merge
+- Uses semantic versioning
+
+### Commit Message Format
+Use [Conventional Commits](https://www.conventionalcommits.org/) for automatic changelog:
+- `feat:` - New features (minor version bump)
+- `fix:` - Bug fixes (patch version bump)
+- `docs:` - Documentation changes
+- `refactor:` - Code refactoring
+- `test:` - Test changes
+- `chore:` - Maintenance
 
 ## External Resources
 - [HVV Departures Integration](https://www.home-assistant.io/integrations/hvv_departures)
