@@ -45,7 +45,9 @@ class HvvCard extends LitElement {
             show_title: true,
             show_name: true,
             show_time: false,
-            show_time_filter: true
+            show_time_filter: true,
+            filter_lines: [],
+            filter_destinations: []
         };
     }
 
@@ -82,6 +84,14 @@ class HvvCard extends LitElement {
         var showTitle = this._config.show_title !== false;
         var showName = this._config.show_name !== false;
         var showTimeFilter = this._config.show_time_filter !== false;
+
+        // Normalize filter arrays (trim, lowercase for case-insensitive matching)
+        const filterLines = (this._config.filter_lines || [])
+            .map(l => l.trim().toLowerCase())
+            .filter(l => l.length > 0);
+        const filterDestinations = (this._config.filter_destinations || [])
+            .map(d => d.trim().toLowerCase())
+            .filter(d => d.length > 0);
 
         return html `
              <ha-card>
@@ -154,9 +164,19 @@ class HvvCard extends LitElement {
                     const referenceTime = new Date(today.getTime() + offsetMs);
                     const max = this._config.max ? this._config.max : 5;
 
-                    // Filter departures by reference time, sort by actual departure (scheduled + delay), and limit
+                    // Filter departures by reference time, optional line/destination filters,
+                    // sort by actual departure (scheduled + delay), and limit to max
                     const filteredDepartures = stateObj.attributes['next']
                         .filter(attr => new Date(attr.departure) >= referenceTime)
+                        .filter(attr => {
+                            if (filterLines.length === 0) return true;
+                            return filterLines.includes((attr.line || '').toLowerCase());
+                        })
+                        .filter(attr => {
+                            if (filterDestinations.length === 0) return true;
+                            const dir = (attr.direction || '').toLowerCase();
+                            return filterDestinations.some(fd => dir.includes(fd));
+                        })
                         .sort((a, b) => {
                             const aActual = new Date(a.departure).getTime() + (a.delay || 0) * 1000;
                             const bActual = new Date(b.departure).getTime() + (b.delay || 0) * 1000;
@@ -172,6 +192,9 @@ class HvvCard extends LitElement {
                             `
                         : ""
                         }
+                        ${filteredDepartures.length === 0
+                            ? html`<p class="no-departures">No departures match the current filters</p>`
+                            : html`
                         <table>
                             ${filteredDepartures.map(attr => {
                                 const direction = attr['direction'];
@@ -222,7 +245,7 @@ class HvvCard extends LitElement {
                                     </tr>
                                     `;
                             })}
-                        </table>
+                        </table>`}
                     </div>
             `;
         })}
@@ -459,6 +482,15 @@ class HvvCardEditor extends LitElement {
         return this._config.show_time_filter !== false;
     }
 
+    // filter_lines and filter_destinations stored as arrays, edited as comma-separated strings
+    get _filter_lines() {
+        return (this._config.filter_lines || []).join(', ');
+    }
+
+    get _filter_destinations() {
+        return (this._config.filter_destinations || []).join(', ');
+    }
+
     render() {
         if (!this.hass) {
             return html``;
@@ -520,6 +552,26 @@ class HvvCardEditor extends LitElement {
                     </div>
                 </div>
 
+                <div class="config-row">
+                    <label>Filter Lines <span class="hint">(comma-separated, e.g. S1, U3, 25)</span></label>
+                    <input
+                        type="text"
+                        placeholder="Leave empty to show all lines"
+                        .value="${this._filter_lines}"
+                        @input="${this._filterLinesChanged}"
+                    />
+                </div>
+
+                <div class="config-row">
+                    <label>Filter Destinations <span class="hint">(comma-separated, partial match)</span></label>
+                    <input
+                        type="text"
+                        placeholder="Leave empty to show all destinations"
+                        .value="${this._filter_destinations}"
+                        @input="${this._filterDestinationsChanged}"
+                    />
+                </div>
+
                 <div class="config-row switches">
                     <label class="switch-label">
                         <input
@@ -563,6 +615,20 @@ class HvvCardEditor extends LitElement {
                 </div>
             </div>
         `;
+    }
+
+    _filterLinesChanged(ev) {
+        const raw = ev.target.value;
+        const arr = raw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        this._config = { ...this._config, filter_lines: arr };
+        this._fireConfigChanged();
+    }
+
+    _filterDestinationsChanged(ev) {
+        const raw = ev.target.value;
+        const arr = raw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+        this._config = { ...this._config, filter_destinations: arr };
+        this._fireConfigChanged();
     }
 
     _valueChanged(ev) {
@@ -648,6 +714,12 @@ class HvvCardEditor extends LitElement {
                 margin-bottom: 8px;
                 font-weight: 500;
                 color: var(--primary-text-color);
+            }
+
+            .hint {
+                font-weight: normal;
+                font-size: 0.85em;
+                color: var(--secondary-text-color);
             }
 
             .config-row input[type="text"],
