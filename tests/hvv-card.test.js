@@ -475,12 +475,14 @@ describe('hvv-card custom element', () => {
       
       expect(stubConfig).toEqual({
         entities: [],
+        filter_destinations: [],
+        filter_lines: [],
         title: "HVV Departures",
         max: 5,
-        show_title: true,
         show_name: true,
         show_time: false,
-        show_time_filter: true
+        show_time_filter: true,
+        show_title: true,
       });
     });
 
