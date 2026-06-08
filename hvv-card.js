@@ -231,13 +231,13 @@ class HvvCard extends LitElement {
                                                             departureMins
                                                     }
                                                     ${delay_minutes > 0 ?
-                                                        html`<span class="delay_minutes">+${delay_minutes}</span>` :
+                                                        html`(<span class="delay_minutes">+${delay_minutes}</span>` :
                                                         ``}
                                                     ${delay_minutes <= 0 && this._config.show_time ?
                                                         `` :
                                                         departureHours > 0 ?
-                                                            `h:min` :
-                                                            `min`
+                                                            `h:min)` :
+                                                            `min)`
                                                     }
                                                 `
                                             }
