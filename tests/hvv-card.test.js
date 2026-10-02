@@ -562,4 +562,46 @@ describe('hvv-card custom element', () => {
       expect(editor._show_time_filter).toBe(false);
     });
   });
+
+  describe('card picker registration', () => {
+    test('registers the card in window.customCards', () => {
+      require('../hvv-card.js');
+      expect(Array.isArray(window.customCards)).toBe(true);
+
+      const entry = window.customCards.find((c) => c.type === 'hvv-card');
+      expect(entry).toBeDefined();
+      expect(entry.name).toBe('HVV Card');
+      expect(typeof entry.description).toBe('string');
+      expect(entry.description.length).toBeGreaterThan(0);
+      expect(entry.preview).toBe(false);
+    });
+
+    test('registers the card exactly once', () => {
+      require('../hvv-card.js');
+      const entries = window.customCards.filter((c) => c.type === 'hvv-card');
+      expect(entries).toHaveLength(1);
+    });
+
+    test('type matches the defined custom element', () => {
+      require('../hvv-card.js');
+      const entry = window.customCards.find((c) => c.type === 'hvv-card');
+      expect(customElements.get(entry.type)).toBeDefined();
+    });
+
+    test('preserves cards already registered by other modules', () => {
+      jest.isolateModules(() => {
+        window.customCards = [{ type: 'other-card', name: 'Other Card' }];
+        // the element is already defined from earlier requires, so stub define to allow re-evaluation
+        const originalDefine = customElements.define.bind(customElements);
+        customElements.define = jest.fn();
+        try {
+          require('../hvv-card.js');
+        } finally {
+          customElements.define = originalDefine;
+        }
+        expect(window.customCards.some((c) => c.type === 'other-card')).toBe(true);
+        expect(window.customCards.some((c) => c.type === 'hvv-card')).toBe(true);
+      });
+    });
+  });
 });
